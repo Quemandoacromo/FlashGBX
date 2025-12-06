@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # FlashGBX
-# Author: Lesserkuma (github.com/lesserkuma)
+# Author: Lesserkuma (github.com/Lesserkuma)
 
 import functools, os, json, platform, shutil
 from PIL.ImageQt import ImageQt

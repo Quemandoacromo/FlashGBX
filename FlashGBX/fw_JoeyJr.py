@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # FlashGBX
-# Author: Lesserkuma (github.com/lesserkuma)
+# Author: Lesserkuma (github.com/Lesserkuma)
 
 import zipfile, time, os, struct, serial, platform
 from serial import SerialException
@@ -422,7 +422,7 @@ try:
 						verified = False
 
 			if verified is False:
-				text = "The firmware update file is corrupted."
+				text = "The firmware update file is corrupted or invalid."
 				self.btnUpdate.setEnabled(True)
 				self.btnClose.setEnabled(True)
 				msgbox = QtWidgets.QMessageBox(parent=self, icon=QtWidgets.QMessageBox.Critical, windowTitle="FlashGBX", text=text, standardButtons=QtWidgets.QMessageBox.Ok)

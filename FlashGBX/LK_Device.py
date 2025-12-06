@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # FlashGBX
-# Author: Lesserkuma (github.com/lesserkuma)
+# Author: Lesserkuma (github.com/Lesserkuma)
 
 import time, math, struct, traceback, zlib, copy, hashlib, os, datetime, platform, json, base64
 import serial, serial.tools.list_ports
@@ -147,6 +147,7 @@ class LK_Device(ABC):
 	AGB_READ_METHODS = ["Single", "MemCpy", "Stream"]
 	LAST_CHECK_ACTIVE = 0
 	USER_ANSWER = None
+	SKIP_POWERCYCLE = False
 	
 	def __init__(self):
 		pass
@@ -721,7 +722,7 @@ class LK_Device(ABC):
 				continue
 
 	def CartPowerCycle(self, delay=0.1):
-		if self.CanPowerCycleCart():
+		if self.CanPowerCycleCart() and not self.SKIP_POWERCYCLE:
 			dprint("Power cycling cartridge with a delay of {:.1f} seconds".format(delay))
 			self.CartPowerOff(delay=delay)
 			self.CartPowerOn(delay=delay)
@@ -868,6 +869,7 @@ class LK_Device(ABC):
 		dprint(f"Setting automatic power off time value to {value}")
 		self._set_fw_variable("AUTO_POWEROFF_TIME", value)
 		self._set_fw_variable("AUTO_POWEROFF_ENABLED", 1 if value != 0 else 0)
+		self.SKIP_POWERCYCLE = False if value != 0 else True
 	
 	def GetSupportedCartridgesDMG(self):
 		return (list(self.SUPPORTED_CARTS['DMG'].keys()), list(self.SUPPORTED_CARTS['DMG'].values()))
@@ -1104,7 +1106,7 @@ class LK_Device(ABC):
 		if self.MODE == "DMG": #and setPinsAsInputs:
 			self._write(self.DEVICE_CMD["SET_ADDR_AS_INPUTS"], wait=self.FW["fw_ver"] >= 12)
 
-		self.Debug()
+		#self.Debug()
 		return data
 	
 	def _DetectCartridge(self, args): # Wrapper for thread call
@@ -1140,7 +1142,7 @@ class LK_Device(ABC):
 		
 		# Disable Auto Power Off
 		_apoe = False
-		if self.FW["fw_ver"] >= 12:
+		if self.FW["fw_ver"] >= 12 and self.SKIP_POWERCYCLE is False:
 			if self.CanPowerCycleCart():
 				self.CartPowerCycle()
 				_apoe = self._get_fw_variable("AUTO_POWEROFF_ENABLED") == 1
@@ -1266,7 +1268,7 @@ class LK_Device(ABC):
 								save_size = Util.AGB_Flash_Save_Chips_Sizes[list(Util.AGB_Flash_Save_Chips).index(flash_save_id)]
 								save_chip = Util.AGB_Flash_Save_Chips[flash_save_id]
 								
-								if flash_save_id in (0xBF5B, 0xFFFF): # Bootlegs
+								if flash_save_id in (0xBF4B, 0xBF5B, 0xFFFF): # Bootlegs
 									if self.INFO["data"][0:0x20000] == bytearray([0xFF] * 0x20000):
 										save_type = 5
 									elif self.INFO["data"][0:0x10000] == self.INFO["data"][0x10000:0x20000]:
@@ -1332,7 +1334,7 @@ class LK_Device(ABC):
 		self.INFO["last_action"] = 0
 		self.INFO["action"] = None
 
-		if self.CanPowerCycleCart() and _apoe is True:
+		if self.CanPowerCycleCart() and _apoe is True and self.SKIP_POWERCYCLE is False:
 			self._set_fw_variable("AUTO_POWEROFF_TIME", _apot)
 
 		return (info, save_size, save_type, save_chip, sram_unstable, cart_types, cart_type_id, cfi_s, cfi, flash_id, detected_size)
@@ -2882,6 +2884,7 @@ class LK_Device(ABC):
 			
 			# Calculate Global Checksum
 			if self.MODE == "DMG":
+				self.INFO["dump_info"]["header"].update(RomFileDMG(buffer[:0x180]).GetHeader(unchanged=True))
 				if _mbc.GetName() == "MMM01":
 					self.INFO["dump_info"]["header"].update(RomFileDMG(buffer[-0x8000:-0x8000+0x180]).GetHeader(unchanged=True))
 				elif _mbc.GetName() == "Sachen":
@@ -3118,7 +3121,7 @@ class LK_Device(ABC):
 					return False
 				buffer_len = 0x1000
 				(agb_flash_chip, _) = ret
-				if agb_flash_chip in (0xBF5B, 0xFFFF): # Bootlegs
+				if agb_flash_chip in (0xBF4B, 0xBF5B, 0xFFFF): # Bootlegs
 					buffer_len = 0x800
 			elif args["save_type"] == 6: # DACS
 				# self._write(self.DEVICE_CMD["AGB_BOOTUP_SEQUENCE"], wait=self.FW["fw_ver"] >= 12)
@@ -3255,7 +3258,7 @@ class LK_Device(ABC):
 				end_address = min(save_size, bank_size)
 				
 				if save_size > bank_size:
-					if args["save_type"] == 8 or agb_flash_chip in (0xBF5B, 0xFFFF): # Bootleg 1M
+					if args["save_type"] == 8 or agb_flash_chip in (0xBF4B, 0xBF5B, 0xFFFF): # Bootleg 1M
 						dprint("Switching to bootleg save bank {:d}".format(bank))
 						self._cart_write(0x1000000, bank)
 					elif args["save_type"] == 5: # FLASH 1M
@@ -3563,7 +3566,7 @@ class LK_Device(ABC):
 					buffer[0xFF80:0x10000] = self.INFO["data"][0xFF80:0x10000]
 					buffer[0x1FF80:0x20000] = self.INFO["data"][0xFF80:0x10000]
 				
-				elif (self.INFO["data"][:end_address] != buffer[:end_address]):
+				if (self.INFO["data"][:end_address] != buffer[:end_address]):
 					msg = ""
 					count = 0
 					time_start = time.time()

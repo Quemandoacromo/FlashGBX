@@ -11,6 +11,7 @@
 		[ 0x20, 0x00, 0x7D, 0x00 ]
 	],
 	"voltage":3.3,
+	"voltage_variants":true,
 	"flash_size":0x400000,
 	"start_addr":0,
 	"first_bank":1,

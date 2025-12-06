@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # FlashGBX
-# Author: Lesserkuma (github.com/lesserkuma)
+# Author: Lesserkuma (github.com/Lesserkuma)
 
 # pylint: disable=wildcard-import, unused-wildcard-import
 from .LK_Device import *

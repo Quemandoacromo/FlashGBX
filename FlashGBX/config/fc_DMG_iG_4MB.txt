@@ -1,10 +1,12 @@
 {
 	"type":"DMG",
 	"names":[
-		"insideGadgets 4 MiB (S29GL032M)"
+		"insideGadgets 4 MiB (S29GL032M)",
+		"ModRetro Chromatic Cartridge with IS29GL032"
 	],
 	"flash_ids":[
-		[ 0x01, 0x01, 0x7E, 0x7E ]
+		[ 0x01, 0x01, 0x7E, 0x7E ],
+		[ 0x9D, 0x9D, 0x7E, 0x7E ]
 	],
 	"voltage":5,
 	"flash_size":0x400000,

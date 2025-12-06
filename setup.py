@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # FlashGBX
-# Author: Lesserkuma (github.com/lesserkuma)
+# Author: Lesserkuma (github.com/Lesserkuma)
 
 import setuptools
 
@@ -8,10 +8,10 @@ with open("README.md", "r", encoding="utf-8") as fh: long_description = fh.read(
 
 setuptools.setup(
 	name="FlashGBX",
-	version="4.4",
+	version="4.5",
 	author="Lesserkuma",
 	description="Reads and writes Game Boy and Game Boy Advance cartridge data",
-	url="https://github.com/lesserkuma/FlashGBX",
+	url="https://github.com/Lesserkuma/FlashGBX",
 	packages=setuptools.find_packages(),
 	install_requires=['pyserial>=3.5', 'Pillow', 'setuptools', 'requests', 'python-dateutil'],
 	extras_require={
@@ -30,8 +30,8 @@ setuptools.setup(
 		'Intended Audience :: Developers',
 	],
 	project_urls={
-		'Source': 'https://github.com/lesserkuma/FlashGBX/',
-		'Tracker': 'https://github.com/lesserkuma/FlashGBX/issues',
+		'Source': 'https://github.com/Lesserkuma/FlashGBX/',
+		'Tracker': 'https://github.com/Lesserkuma/FlashGBX/issues',
 	},
 	entry_points={
 		'console_scripts': (

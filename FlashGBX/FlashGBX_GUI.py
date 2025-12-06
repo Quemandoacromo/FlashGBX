@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 # FlashGBX
-# Author: Lesserkuma (github.com/lesserkuma)
+# Author: Lesserkuma (github.com/Lesserkuma)
 
-import sys, os, time, datetime, json, platform, subprocess, requests, webbrowser, pkg_resources, threading, calendar, queue
+import sys, os, time, datetime, json, platform, subprocess, requests, webbrowser, threading, calendar, queue
 from .pyside import QtCore, QtWidgets, QtGui, QApplication
 from PIL.ImageQt import ImageQt
 from PIL import Image
 from serial import SerialException
+from packaging import version
 from .RomFileDMG import RomFileDMG
 from .RomFileAGB import RomFileAGB
 from .PocketCameraWindow import PocketCameraWindow
@@ -204,7 +205,7 @@ class FlashGBX_GUI(QtWidgets.QWidget):
 		self.mnuConfig.addAction("Use &No-Intro file names", lambda: self.SETTINGS.setValue("UseNoIntroFilenames", str(self.mnuConfig.actions()[7].isChecked()).lower().replace("true", "enabled").replace("false", "disabled")))
 		self.mnuConfig.addAction("Automatic cartridge &power off", lambda: [ self.SETTINGS.setValue("AutoPowerOff", str(self.mnuConfig.actions()[8].isChecked()).lower().replace("true", "350").replace("false", "0")), self.SetAutoPowerOff() ])
 		self.mnuConfig.addAction("Skip writing matching ROM chunk&s", lambda: self.SETTINGS.setValue("CompareSectors", str(self.mnuConfig.actions()[9].isChecked()).lower().replace("true", "enabled").replace("false", "disabled")))
-		self.mnuConfig.addAction("Alternative address set mode (can fix or cause write errors)", lambda: self.SETTINGS.setValue("ForceWrPullup", str(self.mnuConfig.actions()[10].isChecked()).lower().replace("true", "enabled").replace("false", "disabled")))
+		self.mnuConfig.addAction("Alternate address set mode (can fix or cause write errors)", lambda: self.SETTINGS.setValue("ForceWrPullup", str(self.mnuConfig.actions()[10].isChecked()).lower().replace("true", "enabled").replace("false", "disabled")))
 		self.mnuConfig.addSeparator()
 		self.mnuConfigReadModeAGB = QtWidgets.QMenu("&Read Method (Game Boy Advance)")
 		self.mnuConfigReadModeAGB.addAction("S&tream", lambda: [ self.SETTINGS.setValue("AGBReadMethod", str(self.mnuConfigReadModeAGB.actions()[1].isChecked()).lower().replace("true", "2")), self.SetAGBReadMethod() ])
@@ -629,8 +630,8 @@ class FlashGBX_GUI(QtWidgets.QWidget):
 				self.SETTINGS.setValue("UpdateCheck", "disabled")
 		if update_check and update_check.lower() == "enabled":
 			print("")
-			url = "https://api.github.com/repos/lesserkuma/FlashGBX/releases/latest"
-			site = "https://github.com/lesserkuma/FlashGBX/releases/latest"
+			url = "https://api.github.com/repos/Lesserkuma/FlashGBX/releases/latest"
+			site = "https://github.com/Lesserkuma/FlashGBX/releases/latest"
 			try:
 				ret = requests.get(url, allow_redirects=True, timeout=1.5)
 			except requests.exceptions.ConnectTimeout as e:
@@ -648,9 +649,9 @@ class FlashGBX_GUI(QtWidgets.QWidget):
 					ret = json.loads(ret)
 					if 'tag_name' in ret:
 						latest_version = str(ret['tag_name'])
-						if pkg_resources.parse_version(latest_version) == pkg_resources.parse_version(VERSION_PEP440):
+						if version.parse(latest_version) == version.parse(VERSION_PEP440):
 							print("You are using the latest version of {:s}.".format(APPNAME))
-						elif pkg_resources.parse_version(latest_version) > pkg_resources.parse_version(VERSION_PEP440):
+						elif version.parse(latest_version) > version.parse(VERSION_PEP440):
 							msg_text = "A new version of {:s} has been released!\nVersion {:s} is now available.".format(APPNAME, latest_version)
 							print(msg_text)
 							msgbox = QtWidgets.QMessageBox(parent=self, icon=QtWidgets.QMessageBox.Question, windowTitle="{:s} Update Check".format(APPNAME), text=msg_text)
@@ -725,14 +726,14 @@ class FlashGBX_GUI(QtWidgets.QWidget):
 	def AboutFlashGBX(self):
 		msg = "This software is being developed by Lesserkuma as a hobby project. There is no affiliation with Nintendo or any other company. This software is provided as-is and the developer is not responsible for any damage that is caused by the use of it. Use at your own risk!<br><br>"
 		msg += f"© 2020–{datetime.datetime.now().year} Lesserkuma<br>"
-		msg += "• Website: <a href=\"https://github.com/lesserkuma/FlashGBX\">https://github.com/lesserkuma/FlashGBX</a><br><br>"
-		msg += "Acknowledgments and Contributors:<br>2358, 90sFlav, AcoVanConis, AdmirtheSableye, AlexiG, ALXCO-Hardware, AndehX, antPL, aronson, Ausar, bbsan, BennVenn, ccs21, chobby, ClassicOldSong, Cliffback, CodyWick13, Corborg, Cristóbal, crizzlycruz, Crystal, Därk, Davidish, delibird_deals, DevDavisNunez, Diddy_Kong, djedditt, Dr-InSide, dyf2007, easthighNerd, EchelonPrime, edo999, Eldram, Ell, EmperorOfTigers, endrift, Erba Verde, ethanstrax, eveningmoose, Falknör, FerrantePescara, frarees, Frost Clock, Gahr, gandalf1980, gboh, gekkio, Godan, Grender, HDR, Herax, Hiccup, hiks, howie0210, iamevn, Icesythe7, ide, infinest, inYourBackline, iyatemu, Jayro, Jenetrix, JFox, joyrider3774, jrharbort, JS7457, julgr, Kaede, kane159, KOOORAY, kscheel, kyokohunter, Leitplanke, litlemoran, LovelyA72, Lu, Luca DS, LucentW, luxkiller65, manuelcm1, marv17, Merkin, metroid-maniac, Mr_V, Mufsta, olDirdey, orangeglo, paarongiroux, Paradoxical, Rairch, Raphaël BOICHOT, redalchemy, RetroGorek, RevZ, RibShark, s1cp, Satumox, Sgt.DoudouMiel, SH, Shinichi999, Sillyhatday, simonK, Sithdown, skite2001, Smelly-Ghost, Sonikks, Squiddy, Stitch, Super Maker, t5b6_de, Tauwasser, TheNFCookie, Timville, twitnic, velipso, Veund, voltagex, Voultar, Warez Waldo, wickawack, Winter1760, Wkr, x7l7j8cc, xactoes, xukkorz, yosoo, Zeii, Zelante, zipplet, Zoo, zvxr"
+		msg += "• Website: <a href=\"https://github.com/Lesserkuma/FlashGBX\">https://github.com/Lesserkuma/FlashGBX</a><br><br>"
+		msg += "Acknowledgments and Contributors:<br>2358, 90sFlav, AcoVanConis, AdmirtheSableye, AlexiG, ALXCO-Hardware, AndehX, antPL, aronson, Ausar, bbsan, BennVenn, ccs21, chobby, ClassicOldSong, Cliffback, CodyWick13, Corborg, Cristóbal, crizzlycruz, Crystal, Därk, Davidish, delibird_deals, DevDavisNunez, Diddy_Kong, djedditt, Dr-InSide, dyf2007, easthighNerd, EchelonPrime, edo999, Eldram, Ell, EmperorOfTigers, endrift, Erba Verde, ethanstrax, eveningmoose, Falknör, FerrantePescara, frarees, Frost Clock, Gahr, gandalf1980, gboh, gekkio, Godan, Grender, HDR, Herax, Hiccup, hiks, howie0210, iamevn, Icesythe7, ide, infinest, inYourBackline, iyatemu, Jayro, Jenetrix, JFox, joyrider3774, jrharbort, JS7457, julgr, Kaede, kane159, KOOORAY, kscheel, kyokohunter, Leif, Leitplanke, litlemoran, LovelyA72, Lu, Luca DS, LucentW, luxkiller65, manuelcm1, marv17, Merkin, metroid-maniac, Mr_V, Mufsta, olDirdey, orangeglo, paarongiroux, Paradoxical, Rairch, Raphaël BOICHOT, redalchemy, RetroGorek, RevZ, RibShark, s1cp, Satumox, Sgt.DoudouMiel, SH, Shinichi999, Sillyhatday, simonK, Sithdown, skite2001, Smelly-Ghost, Sonikks, Squiddy, Stitch, Super Maker, t5b6_de, Tauwasser, TheNFCookie, Timville, twitnic, velipso, Veund, voltagex, Voultar, Warez Waldo, wickawack, Winter1760, Wkr, x7l7j8cc, xactoes, xukkorz, yosoo, Zeii, Zelante, zipplet, Zoo, zvxr"
 		QtWidgets.QMessageBox.information(self, "{:s} {:s}".format(APPNAME, VERSION), msg, QtWidgets.QMessageBox.Ok)
 
 	def AboutGameDB(self):
 		msg = f"{APPNAME} uses a game database that is based on the ongoing efforts of the No-Intro project. Visit <a href=\"https://no-intro.org/\">https://no-intro.org/</a> for more information.<br><br>"
 		msg += f"No-Intro databases referenced for this version of {APPNAME}:<br>"
-		msg += "• Nintendo - Game Boy (20250427-010043)<br>• Nintendo - Game Boy Advance (20250516-204815)<br>• Nintendo - Game Boy Advance (Video) (20241213-211743)<br>• Nintendo - Game Boy Color (20250516-032234)" # No-Intro DBs
+		msg += "• Nintendo - Game Boy (20251203-165423)<br>• Nintendo - Game Boy Advance (20251202-225320)<br>• Nintendo - Game Boy Advance (Video) (20251114-101831)<br>• Nintendo - Game Boy Color (20251127-150925)" # No-Intro DBs
 		QtWidgets.QMessageBox.information(self, "{:s} {:s}".format(APPNAME, VERSION), msg, QtWidgets.QMessageBox.Ok)
 
 	def OpenPath(self, path=None):
@@ -887,7 +888,7 @@ class FlashGBX_GUI(QtWidgets.QWidget):
 								text = "A firmware update for your {:s} device is required to use this software. Do you want to update now?".format(dev.GetFullName())
 								msgbox = QtWidgets.QMessageBox(parent=self, icon=QtWidgets.QMessageBox.Warning, windowTitle="{:s} {:s}".format(APPNAME, VERSION), text=text, standardButtons=QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, defaultButton=QtWidgets.QMessageBox.Yes)
 							elif dev.FW_UPDATE_REQ == 2:
-								text = "Your {:s} device is no longer supported in this version of FlashGBX due to technical limitations. The last supported version is <a href=\"https://github.com/lesserkuma/FlashGBX/releases/tag/3.37\">FlashGBX v3.37</a>.\n\nYou can still use the Firmware Updater, however any other functions are no longer available.\n\nDo you want to run the Firmware Updater now?".format(dev.GetFullName()).replace("\n", "<br>")
+								text = "Your {:s} device is no longer supported in this version of FlashGBX due to technical limitations. The last supported version is <a href=\"https://github.com/Lesserkuma/FlashGBX/releases/tag/3.37\">FlashGBX v3.37</a>.\n\nYou can still use the Firmware Updater, however any other functions are no longer available.\n\nDo you want to run the Firmware Updater now?".format(dev.GetFullName()).replace("\n", "<br>")
 								msgbox = QtWidgets.QMessageBox(parent=self, icon=QtWidgets.QMessageBox.Warning, windowTitle="{:s} {:s}".format(APPNAME, VERSION), text=text, standardButtons=QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, defaultButton=QtWidgets.QMessageBox.Yes)
 							else:
 								text = "A firmware update for your {:s} device is available. Do you want to update now?".format(dev.GetFullName())
@@ -988,7 +989,7 @@ class FlashGBX_GUI(QtWidgets.QWidget):
 					"- Check if the operating system detects the device (if not, reboot your machine)\n" \
 					"- Update the firmware through Options → Tools → Firmware Updater"
 				if platform.system() == "Darwin":
-					msg += "\n   - <b>For Joey Jr on macOS:</b> Use the dedicated <a href=\"https://github.com/lesserkuma/JoeyJr_FWUpdater\">Firmware Updater for Joey Jr</a>"
+					msg += "\n   - <b>For Joey Jr on macOS:</b> Use the dedicated <a href=\"https://github.com/Lesserkuma/JoeyJr_FWUpdater\">Firmware Updater for Joey Jr</a>"
 				elif platform.system() == "Linux":
 					msg += "\n- <b>For Linux users:</b> Ensure your user account has permissions to use the device (try adding yourself to user groups “dialout” or “uucp”)"
 
@@ -2273,11 +2274,11 @@ class FlashGBX_GUI(QtWidgets.QWidget):
 				detected = False
 		if detected is False:
 			intro_msg = "In order to access Batteryless SRAM save data, its ROM location and size must be specified.\n\n"
-			if mode == "AGB":
-				max_size = self.cmbAGBHeaderROMSizeResult.currentText().replace(" ", " ")
-			elif mode == "DMG":
-				max_size = self.cmbDMGHeaderROMSizeResult.currentText().replace(" ", " ")
-			intro_msg2 = "⚠️ The required parameters could not be auto-detected. Please enter the ROM location and size manually below. Note that wrong values can corrupt your game upon writing, so having a full " + max_size + " ROM backup is recommended."
+			# if mode == "AGB":
+			# 	max_size = self.cmbAGBHeaderROMSizeResult.currentText().replace(" ", " ")
+			# elif mode == "DMG":
+			# 	max_size = self.cmbDMGHeaderROMSizeResult.currentText().replace(" ", " ")
+			intro_msg2 = "⚠️ The required parameters could not be auto-detected. Please enter the ROM location and size manually below. Note that wrong values can corrupt your game upon writing, so having a full ROM backup is recommended."
 
 			if mode == "DMG":
 				# Load database of observed configurations from various bootlegs
@@ -2600,7 +2601,7 @@ class FlashGBX_GUI(QtWidgets.QWidget):
 				self.CONN.SetMode("DMG")
 			elif self.optAGB.isChecked() and (mode == "DMG" or mode == None):
 				self.CONN.SetMode("AGB")
-		except BrokenPipeError:
+		except (BrokenPipeError, SerialException):
 			msg = "Failed to turn on the cartridge power.\n\nThe “Automatic cartridge power off” setting has therefore been disabled. Please re-connect the device and try again."
 			self.mnuConfig.actions()[5].setChecked(False)
 			self.SETTINGS.setValue("AutoPowerOff", "0")
@@ -2635,7 +2636,7 @@ class FlashGBX_GUI(QtWidgets.QWidget):
 		
 		try:
 			data = self.CONN.ReadInfo(setPinsAsInputs=True)
-		except SerialException:
+		except (BrokenPipeError, SerialException):
 			self.LimitBaudRateGBxCartRW()
 			self.DisconnectDevice()
 			QtWidgets.QMessageBox.critical(self, "{:s} {:s}".format(APPNAME, VERSION), "The connection to the device was lost while trying to read the ROM header. This may happen if the inserted cartridge issues a short circuit or its peak power draw is too high.\n\nAs a potential workaround for the latter, you can try hotswapping the cartridge:\n1. Remove the cartridge from the device.\n2. Reconnect the device and select mode.\n3. Then insert the cartridge and click “{:s}”.".format(self.btnHeaderRefresh.text().replace("&", "")), QtWidgets.QMessageBox.Ok)

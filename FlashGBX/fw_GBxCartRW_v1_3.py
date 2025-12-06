@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # FlashGBX
-# Author: Lesserkuma (github.com/lesserkuma)
+# Author: Lesserkuma (github.com/Lesserkuma)
 
 import zipfile, os, serial, struct, time, re, math
 from .pyside import QtCore, QtWidgets, QtGui, QDesktopWidget

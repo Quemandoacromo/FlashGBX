@@ -1,4 +1,12 @@
 # Release notes
+### v4.5 (released 2025-12-06)
+- Added support for SD007_T40_6401B\*CD_71_TS28 with 39VF6401B
+- Added support for ModRetro Chromatic Cartridge with IS29GL032 *(thanks Jayro)*
+- Added support for MXP54_16D_ERATH with MSP54LV256
+- Added support for a new Game Boy Advance bootleg flash save chip
+- Confirmed support for MXP54_16D_046 with MSP54LV256
+- Updated the Game Boy and Game Boy Advance lookup databases for save types, ROM sizes and checksums
+
 ### v4.4 (released 2025-05-23)
 - Added a few workarounds for instabilities with some GBxCart RW devices
 - Fixed save data access for “Korokoro Puzzle - Happy Panecchu!” (AGB-KHPJ-JPN)
@@ -423,7 +431,7 @@
 - Confirmed support for SD007_TSOP_48BALL_V10 with GL032M10BFIR3 *(thanks Mr_V)*
 - Added support for 2006_TSOP_64BALL_6106 with W29GL128SH9B *(thanks marv17)*
 - Fixed support for insideGadgets 1 MB, 128 KB SRAM *(thanks AlexiG)*
-- The [setup package](https://github.com/lesserkuma/FlashGBX/releases) now includes the CH341 USB serial driver for insideGadgets GBxCart RW devices
+- The [setup package](https://github.com/Lesserkuma/FlashGBX/releases) now includes the CH341 USB serial driver for insideGadgets GBxCart RW devices
 
 ### v2.2 (released 2021-06-03)
 - Added support for insideGadgets 2 MB, 32 KB FRAM, v1.0 *(thanks t5b6_de)*

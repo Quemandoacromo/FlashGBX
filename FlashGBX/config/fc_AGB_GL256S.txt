@@ -3,11 +3,13 @@
 	"names":[
 		"BX2006_TSOP_64BALL with GL256S",
 		"BGA64B-71-TV-DEEP with 256M29EML",
-		"FunnyPlaying MidnightTrace 32 MiB Flash Cart"
+		"FunnyPlaying MidnightTrace 32 MiB Flash Cart",
+		"MXP54_16D_046 with MSP54LV256"
 	],
 	"flash_ids":[
 		[ 0x02, 0x00, 0x7D, 0x22 ],
 		[ 0x8A, 0x00, 0x7D, 0x22 ],
+		[ 0x02, 0x00, 0x7D, 0x22 ],
 		[ 0x02, 0x00, 0x7D, 0x22 ]
 	],
 	"voltage":3.3,

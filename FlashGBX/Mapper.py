@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # FlashGBX
-# Author: Lesserkuma (github.com/lesserkuma)
+# Author: Lesserkuma (github.com/Lesserkuma)
 
 import time, datetime, struct, math, hashlib
 from dateutil.relativedelta import relativedelta
@@ -260,13 +260,6 @@ class DMG_MBC3(DMG_MBC):
 	def GetName(self):
 		return "MBC3"
 	
-	def EnableRAM(self, enable=True):
-		dprint(self.GetName(), "|", enable)
-		commands = [
-			[ 0x0000, 0x0A if enable else 0x00 ],
-		]
-		self.CartWrite(commands)
-	
 	def HasRTC(self):
 		dprint("Checking for RTC")
 		if self.MBC_ID not in (0x0F, 0x10, 0x110, 0x206):
@@ -471,20 +464,6 @@ class DMG_MBC3(DMG_MBC):
 class DMG_MBC5(DMG_MBC):
 	def GetName(self):
 		return "MBC5"
-	
-	def EnableRAM(self, enable=True):
-		dprint(self.GetName(), "|", enable)
-		if enable:
-			commands = [
-				[ 0x6000, 0x01 ],
-				[ 0x0000, 0x0A ],
-			]
-		else:
-			commands = [
-				[ 0x0000, 0x00 ],
-				[ 0x6000, 0x00 ],
-			]
-		self.CartWrite(commands)
 	
 	def SelectBankROM(self, index):
 		dprint(self.GetName(), "|", index)
@@ -701,7 +680,7 @@ class DMG_MMM01(DMG_MBC):
 class DMG_GBD(DMG_MBC5):
 	def GetName(self):
 		return "MAC-GBD"
-
+		
 	def SelectBankROM(self, index):
 		dprint(self.GetName(), "|", index)
 		commands = [

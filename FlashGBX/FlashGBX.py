@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # FlashGBX
-# Author: Lesserkuma (github.com/lesserkuma)
+# Author: Lesserkuma (github.com/Lesserkuma)
 
 import sys, os, glob, re, json, zlib, argparse, zipfile, traceback, platform, datetime, copy
 from . import Util
@@ -88,7 +88,7 @@ def main(portableMode=False):
 			os.environ['QT_MAC_WANTS_LAYER'] = '1'
 	
 	print("{:s} {:s} by Lesserkuma".format(Util.APPNAME, Util.VERSION))
-	print("https://github.com/lesserkuma/FlashGBX")
+	print("https://github.com/Lesserkuma/FlashGBX")
 	
 	if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
 		app_path = os.path.dirname(sys.executable)
@@ -139,6 +139,7 @@ def main(portableMode=False):
 	ap_cli2.add_argument("--agb-romsize", choices=["auto", "32kb", "64kb", "128kb", "256kb", "512kb", "1mb", "2mb", "4mb", "8mb", "16mb", "32mb", "64mb", "128mb", "256mb", "512mb"], type=str.lower, default="auto", help="set size of Game Boy Advance cartridge ROM data")
 	ap_cli2.add_argument("--agb-savetype", choices=["auto", "eeprom4k", "eeprom64k", "sram256k", "flash512k", "flash1m", "dacs8m", "sram512k", "sram1m"], type=str.lower, default="auto", help="set type of Game Boy Advance cartridge save data")
 	ap_cli2.add_argument("--store-rtc", action="store_true", default=False, help="store RTC register values if supported")
+	ap_cli2.add_argument("--keep-calibration", action="store_true", default=True, help="keep existing calibration data of the e-Reader when writing save data")
 	ap_cli2.add_argument("--ignore-bad-header", action="store_true", help="don’t stop if invalid data found in cartridge header data")
 	ap_cli2.add_argument("--flashcart-type", type=str, default="autodetect", help="name of flash cart; see txt files in config directory")
 	ap_cli2.add_argument("--prefer-chip-erase", action="store_true", help="prefer full chip erase over sector erase when both available")

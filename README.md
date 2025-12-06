@@ -1,8 +1,8 @@
 # FlashGBX (by Lesserkuma)
 
-for Windows, Linux, macOS (→ [Download](https://github.com/lesserkuma/FlashGBX/releases))
+for Windows, Linux, macOS (→ [Download](https://github.com/Lesserkuma/FlashGBX/releases))
 
-<img src="https://raw.githubusercontent.com/lesserkuma/FlashGBX/master/.github/01.png" alt="FlashGBX on Windows 11" width="500"><br><img src="https://raw.githubusercontent.com/lesserkuma/FlashGBX/master/.github/02.png" alt="GB Camera Album Viewer" width="500">
+<img src="https://raw.githubusercontent.com/Lesserkuma/FlashGBX/master/.github/01.png" alt="FlashGBX on Windows 11" width="500"><br><img src="https://raw.githubusercontent.com/Lesserkuma/FlashGBX/master/.github/02.png" alt="GB Camera Album Viewer" width="500">
 
 ## Introduction
 
@@ -108,6 +108,7 @@ for Windows, Linux, macOS (→ [Download](https://github.com/lesserkuma/FlashGBX
   - insideGadgets 4 MiB (2× 2 MiB), 32 KiB FRAM, MBC5
   - insideGadgets MegaDuck 32K
   - ModRetro Chromatic Cartridge with 39VF1681
+  - ModRetro Chromatic Cartridge with IS29GL032
   - Mr Flash 64M
   - Sillyhatday MBC5-DUAL-FLASH-4/8MB
   - Squareboi 4 MiB (2× 2 MiB)
@@ -185,6 +186,7 @@ for Windows, Linux, macOS (→ [Download](https://github.com/lesserkuma/FlashGBX
   - SD007_BV5_V3 with AM29LV160MB
   - SD007_K8D3216_32M with MX29LV160CT
   - SD007_T40_48BALL_71_TV_TS28 with M29W640
+  - SD007_T40_6401B\*CD_71_TS28 with 39VF6401B
   - SD007_T40_64BALL_S71_TV_TS28 with TC58FVB016FT-85
   - SD007_T40_64BALL_SOJ28 with 29LV016T
   - SD007_T40_64BALL_TSOP28 with 29LV016T
@@ -276,6 +278,8 @@ for Windows, Linux, macOS (→ [Download](https://github.com/lesserkuma/FlashGBX
   - M6MGJ927 (no PCB text)
   - MSP54LV512 (no PCB text)
   - MX29GL128EHT2I and ALTERA CPLD
+  - MXP54_16D_046 with MSP54LV256
+  - MXP54_16D_ERATH with MSP54LV256
   - SUN100S_MSP54XXX with MSP54LV100
   - Unknown 29LV320 variant (no PCB text)
 
@@ -287,19 +291,20 @@ Many different reproduction cartridges share their flash chip command set, so ev
 
 ### Pre-compiled binaries and packages
 
-Available in the GitHub [Releases](https://github.com/lesserkuma/FlashGBX/releases) section are pre-compiled downloads available for:
+Available in the GitHub [Releases](https://github.com/Lesserkuma/FlashGBX/releases) section are pre-compiled downloads available for:
 
 * **Windows (64-bit)** *(Windows 8 or newer)*
   * Setup: An installer that will add the application to the start menu and optionally create a desktop icon
   * Portable: Have everything in one place including the config files
 
 * **Linux**
-  * Pre-made packages are contributed by JJ-Fox [here](https://github.com/JJ-Fox/FlashGBX-Linux-builds/releases/latest).
+  * Ubuntu (.deb file): Install using `dpkg -i /path/to/FlashGBX_x.x_Ubuntu-all.deb`.
+  * Other distributions: Pre-made Linux packages are available at [JJ-Fox’s repository](https://github.com/JJ-Fox/FlashGBX-Linux-builds/releases/latest).
 
 * **macOS** *(Monterey 12 or newer)*
-  * x86-64/arm64 (.dmg file): Install by opening the .dmg file and copying over the “FlashGBX” application to the desktop.<br>If it doesn’t run, it probably got quarantined during download. Run the following command in a Terminal window to unquarantine it: `xattr -d com.apple.quarantine /path/to/FlashGBX.app`.<br>*(Based on a contribution by [Cliffback](https://github.com/Cliffback))*
+  * x86-64/arm64 (.dmg file): Install by opening the .dmg file and copying over the “FlashGBX” application to the desktop.<br>If it doesn’t run, it probably got quarantined due to the lack of a Apple Developer Program certificate. Right-click the extracted FlashGBX icon, choose “Open Terminal at Folder” and enter this command to unquarantine it: `xattr -d com.apple.quarantine ../FlashGBX.app`.
 
-  *(If you have a Joey Jr and use macOS, please run the [Joey Jr Firmware Updater](https://github.com/lesserkuma/JoeyJr_FWUpdater) before using FlashGBX.)*
+  *(If you have a Joey Jr and use macOS, please run the [Joey Jr Firmware Updater](https://github.com/Lesserkuma/JoeyJr_FWUpdater) before using FlashGBX.)*
 
 ### Run via Python
 
@@ -385,7 +390,7 @@ Thanks to the No-Intro project for their game databases which FlashGBX’s datab
 
 ## Third Party Notices and Licenses
 
-Please view the <a href="https://github.com/lesserkuma/FlashGBX/blob/master/Third%20Party%20Notices.md">Third Party Notices</a>.
+Please view the <a href="https://github.com/Lesserkuma/FlashGBX/blob/master/Third%20Party%20Notices.md">Third Party Notices</a>.
 
 ## DISCLAIMER
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # FlashGBX
-# Author: Lesserkuma (github.com/lesserkuma)
+# Author: Lesserkuma (github.com/Lesserkuma)
 
 import datetime, shutil, platform, os, math, traceback, re, time, serial, zipfile
 try:
@@ -485,6 +485,9 @@ class FlashGBX_CLI():
 		bad_read = False
 		s = ""
 		if self.CONN.GetMode() == "DMG":
+			if data["db"]:
+				s += "Game Name:       {:s}\n".format(os.path.splitext(Util.GenerateFileName(mode=self.CONN.GetMode(), header=self.CONN.INFO, settings=None))[0])
+
 			s += "Game Title:      {:s}\n".format(data["game_title"])
 			if len(data['game_code']) > 0:
 				s += "Game Code:       {:s}\n".format(data['game_code'])
@@ -554,6 +557,9 @@ class FlashGBX_CLI():
 						self.ARGS["argparsed"].flashcart_type = cart_types[0][i]
 
 		elif self.CONN.GetMode() == "AGB":
+			if data["db"]:
+				s += "Game Name:            {:s}\n".format(os.path.splitext(Util.GenerateFileName(mode=self.CONN.GetMode(), header=self.CONN.INFO, settings=None))[0])
+
 			s += "Game Title:           {:s}\n".format(data["game_title"])
 			s += "Game Code:            {:s}\n".format(data["game_code"])
 			s += "Revision:             {:d}\n".format(data["version"])
@@ -1160,7 +1166,7 @@ class FlashGBX_CLI():
 					if "ereader_calibration" in self.CONN.INFO:
 						with open(path, "rb") as f: buffer = bytearray(f.read())
 						if buffer[0xD000:0xF000] != self.CONN.INFO["ereader_calibration"]:
-							if not args.overwrite:
+							if args.keep_calibration:
 								if args.action == "erase-save": args.action = "restore-save"
 								print("Note: Keeping existing e-Reader calibration data.")
 								buffer[0xD000:0xF000] = self.CONN.INFO["ereader_calibration"]
