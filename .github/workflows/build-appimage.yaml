@@ -1,0 +1,137 @@
+name: AppImage
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - arch: x86_64
+            runs-on: ubuntu-latest
+            linuxdeploy: linuxdeploy-x86_64.AppImage
+          - arch: arm64
+            runs-on: ubuntu-24.04-arm
+            linuxdeploy: linuxdeploy-aarch64.AppImage
+    runs-on: ${{ matrix.runs-on }}
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ github.event.release.tag_name || '0.0' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create directory for Python packages
+        run: |
+          mkdir -p ${{ github.workspace }}/venv
+
+      - name: Cache Python packages
+        id: cache-pip
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/venv
+          key: flashgbx-linux-appimage-${{ matrix.arch }}-python-dependencies-20260205
+          restore-keys: |
+            flashgbx-linux-appimage-${{ matrix.arch }}-python-dependencies-
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python packages
+        if: steps.cache-pip.outputs.cache-hit != 'true'
+        run: |
+          python -m pip install --upgrade pip
+          python -m venv ${{ github.workspace }}/venv
+          source ${{ github.workspace }}/venv/bin/activate
+          python -m pip install pyinstaller==6.18.0 Pillow==12.1.0 PySide6==6.10.2 pyserial==3.5 python-dateutil==2.9.0.post0 requests==2.32.5 packaging==26.0
+
+      - name: Download linuxdeploy
+        run: |
+          wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/${{ matrix.linuxdeploy }}
+          chmod +x ${{ matrix.linuxdeploy }}
+
+      - name: Build FlashGBX
+        run: |
+          rm -r FlashGBX/config
+          cat > run_AppImage.py << 'EOF'
+          from FlashGBX import FlashGBX
+          FlashGBX.main()
+          EOF
+
+          source ${{ github.workspace }}/venv/bin/activate
+          pyinstaller --clean --noconfirm --onedir --name FlashGBX \
+            --collect-all FlashGBX --collect-all PIL --collect-all PySide6 \
+            --exclude-module PySide6.QtQml \
+            --exclude-module PySide6.QmlModels \
+            --exclude-module PySide6.QtWebEngineWidgets \
+            --exclude-module PySide6.QtTest \
+            --exclude-module PySide6.QtPdf \
+            --exclude-module PySide6.QtSvg \
+            --exclude-module PySide6.QtVirtualKeyboard \
+            --exclude-module PySide6.QtNetwork \
+            run_AppImage.py
+          mkdir dist/FlashGBX/res
+          cp -a FlashGBX/res/. dist/FlashGBX/res/
+
+      - name: Prepare AppDir
+        run: |
+          mkdir -p AppDir
+          cp -a dist/FlashGBX/. AppDir/
+
+          cat > AppDir/AppRun << 'EOF'
+          #!/bin/sh
+          APPDIR="$(dirname "$(readlink -f "$0")")"
+          exec "$APPDIR/FlashGBX" "$@"
+          EOF
+          chmod +x AppDir/AppRun
+
+          mkdir -p AppDir/usr/share/applications
+          cat > AppDir/usr/share/applications/FlashGBX.desktop << 'EOF'
+          [Desktop Entry]
+          Name=FlashGBX
+          Exec=FlashGBX
+          Icon=FlashGBX
+          StartupWMClass=FlashGBX
+          Comment=Interface software for GB/GBC/GBA cart readers
+          Type=Application
+          Categories=Game;Utility;
+          EOF
+
+          mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
+          cp FlashGBX/res/icon.png AppDir/usr/share/icons/hicolor/256x256/apps/FlashGBX.png
+
+      - name: Build AppImage with linuxdeploy
+        run: |
+          ./${{ matrix.linuxdeploy }} --appdir AppDir \
+            --executable AppDir/FlashGBX \
+            --desktop-file AppDir/usr/share/applications/FlashGBX.desktop \
+            --icon-file AppDir/usr/share/icons/hicolor/256x256/apps/FlashGBX.png \
+            --output appimage
+          
+          mv FlashGBX-${{ env.VERSION }}-*.AppImage FlashGBX-${{ env.VERSION }}_Linux-${{ matrix.arch }}.AppImage
+
+      - name: Create artifact
+        if: env.VERSION == '0.0'
+        uses: actions/upload-artifact@v4
+        with:
+          name: FlashGBX_Linux-${{ matrix.arch }}
+          path: FlashGBX-${{ env.VERSION }}_Linux-${{ matrix.arch }}.AppImage
+
+      - name: Upload release asset
+        if: env.VERSION != '0.0'
+        uses: softprops/action-gh-release@v2.0.8
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          files: FlashGBX-${{ env.VERSION }}_Linux-${{ matrix.arch }}.AppImage
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
